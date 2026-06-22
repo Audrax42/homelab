@@ -1,7 +1,7 @@
 # Architecture du lab
 
 ## Topologie
-'''
+```
 Internet
 |
 [Box Internet] — Fa0/7
@@ -16,7 +16,7 @@ Internet
 ├── VLAN 20 — LAB 192.168.20.0/24
 ├── VLAN 30 — DMZ 192.168.30.0/24
 └── VLAN 40 — ADMIN 192.168.40.0/24
-'''
+```
 
 ## Rôles
 - **Box** : accès internet uniquement
