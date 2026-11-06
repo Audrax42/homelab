@@ -1,0 +1,34 @@
+# --- Secrets : ne jamais committer ---
+.env
+*.env
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.kdbx
+*.secret
+id_rsa*
+id_ed25519*
+
+# Configurations VPN (contiennent des clés privées)
+wg*.conf
+*.ovpn
+
+# Exports bruts non nettoyés (à anonymiser avant commit)
+*-raw.*
+*.raw
+
+# Sauvegardes et archives
+*.bak
+*.tar
+*.tar.gz
+*.zip
+*.vma*
+
+# Fichiers système / éditeurs
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
