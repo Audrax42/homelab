@@ -14,18 +14,31 @@ Projet d'infrastructure homelab construit pour développer des compétences conc
 
 ---
 
+## État actuel
+
+| Élément | État |
+|---|---|
+| Switch Cisco | VLANs créés, sécurisation et trunk à refaire |
+| Serveur principal | Pas encore choisi |
+| Ancien PC (sauvegardes) | Disponible |
+| Proxmox, OPNsense, services | Pas encore déployés |
+
+---
+
 ## Roadmap
 
-- [x] Phase 1 — Acquisition du matériel
+- [ ] Phase 1 — Matériel *(en cours)*
 - [ ] Phase 2 — Installation Proxmox
-- [ ] Phase 3 — Configuration réseau et VLANs
+- [ ] Phase 3 — Réseau et VLANs *(commencée)*
 - [ ] Phase 4 — Déploiement OPNsense
-- [ ] Phase 5 — Supervision et observabilité
-- [ ] Phase 6 — Services de sécurité
-- [ ] Phase 7 — DevSecOps et automatisation
+- [ ] Phase 5 — Sauvegardes
+- [ ] Phase 6 — Supervision et observabilité
+- [ ] Phase 7 — Services de sécurité
 - [ ] Phase 8 — Services auto-hébergés du quotidien
-- [ ] Phase 9 — Cloud et Azure
-- [ ] Phase 10 — Conteneurisation et orchestration
+- [ ] Phase 9 — Automatisation et DevSecOps
+- [ ] Phase 10 — Plus tard : Azure, conteneurs et orchestration
+
+Détail : [roadmap](docs/05-roadmap.md)
 
 ---
 
@@ -33,86 +46,77 @@ Projet d'infrastructure homelab construit pour développer des compétences conc
 
 | Équipement | Modèle | Rôle |
 |---|---|---|
-| Switch | Cisco WS-C2960-8TC-L | Commutation réseau, VLANs |
-| Serveur principal cible | Mini PC à acheter, minimum 16 Go RAM / 4 cœurs | Hyperviseur Proxmox principal |
-| Ancien PC | Vieux PC 4 Go RAM | Hébergement léger, probablement Prometheus + Grafana uniquement |
-| Micro-serveur | Raspberry Pi Zero 2 W (prévu) | WireGuard, Pi-hole, WoL |
+| Switch | Cisco WS-C2960-8TC-L | Commutation, VLANs |
+| Serveur principal | À définir (2 ports réseau, 32 Go de RAM visés) | Proxmox + OPNsense, toujours allumé |
+| Ancien PC | PC 4 Go RAM | Proxmox Backup Server |
 
 ---
 
 ## Architecture réseau
-
-L'architecture cible repose sur un switch managé Cisco, un hyperviseur Proxmox principal, un micro-serveur léger toujours allumé, et une segmentation logique par VLANs.
-
-> Les adresses IP affichées ci-dessous sont génériques et ne correspondent pas forcément aux adresses réellement retenues dans l'infrastructure finale. Elles sont utilisées ici à titre documentaire pour des raisons de lisibilité et de sécurité.
 
 ```
 Internet
    |
 [Box Internet]
    |
+[Serveur Proxmox] ── OPNsense VM (firewall, routage, VPN WireGuard)
+   |  trunk (Gi0/1)
 [Switch Cisco 2960]
    |
-   ├── [Mini PC Proxmox]
-   │      |
-   │      ├── [OPNsense VM] ── Firewall + Routeur
-   │      |
-   │      ├── VLAN 10 — LAN   192.168.10.0/24
-   │      ├── VLAN 20 — LAB   192.168.20.0/24
-   │      ├── VLAN 30 — DMZ   192.168.30.0/24
-   │      └── VLAN 40 — ADMIN 192.168.40.0/24
-   |
-   ├── [Ancien PC 4 Go]
-   │      └── Prometheus / Grafana
-   |
-   └── [Raspberry Pi Zero 2 W]
-          ├── WireGuard
-          ├── Pi-hole
-          └── Wake-on-LAN
+   ├── VLAN 10 — LAN          192.168.10.0/24   postes perso
+   ├── VLAN 20 — SERVICES     192.168.20.0/24   services auto-hébergés
+   ├── VLAN 30 — DMZ          192.168.30.0/24   vide pour l'instant
+   ├── VLAN 40 — ADMIN        192.168.40.0/24   gestion (Proxmox, switch, PBS)
+   ├── VLAN 50 — MONITORING   192.168.50.0/24   Prometheus, Grafana, Wazuh
+   └── VLAN 60 — LAB-ATTAQUE  192.168.60.0/24   Kali, isolé
 ```
+
+- Tout passage d'un VLAN à un autre traverse OPNsense, avec un refus par défaut ([matrice des flux](docs/06-flux.md)).
+- Rien n'est exposé sur Internet : l'accès à distance passe par WireGuard.
+- Les sauvegardes sont faites sur une machine séparée ([stratégie de sauvegarde](docs/07-sauvegardes.md)).
 
 ---
 
 ## Services prévus
 
-| Service | Rôle | Emplacement prévu |
+| Service | Rôle | VLAN |
 |---|---|---|
-| OPNsense | Firewall, routage, segmentation réseau, VPN éventuel | Proxmox |
-| WireGuard | VPN d'accès distant sécurisé au réseau domestique | Raspberry Pi |
-| Pi-hole | Blocage des publicités et trackers sur le réseau | Raspberry Pi |
-| Wake-on-LAN | Réveil à distance du mini PC Proxmox | Raspberry Pi |
-| Prometheus | Collecte de métriques et supervision | Ancien PC 4 Go |
-| Grafana | Visualisation des métriques et tableaux de bord | Ancien PC 4 Go |
-| Wazuh | SIEM, centralisation des logs et détection | Proxmox |
-| Kali Linux | Machine de test sécurité et exercices offensifs | Proxmox |
-| GitLab / Gitea | Dépôts Git, CI/CD, centralisation de projets | Proxmox |
-| Vaultwarden | Gestionnaire de mots de passe auto-hébergé | Proxmox |
-| Paperless-NGX | Gestion, archivage et recherche de documents | Proxmox |
-| Nextcloud | Synchronisation et partage de fichiers | Proxmox |
-| Immich | Sauvegarde et gestion des photos | Proxmox |
-| Portainer | Gestion des conteneurs Docker | Proxmox |
-| Homepage / Homarr | Tableau de bord central des services | Proxmox |
-| Ansible | Automatisation de configuration | Poste d'administration / Proxmox |
-| Terraform | Infrastructure as Code pour les futurs environnements | Poste d'administration / Proxmox |
+| OPNsense | Firewall, routage, DHCP, DNS récursif, VPN WireGuard | Tous |
+| Proxmox Backup Server | Sauvegardes des VMs et LXC | ADMIN |
+| Prometheus / Grafana | Métriques et tableaux de bord | MONITORING |
+| Wazuh | SIEM, centralisation des logs, détection | MONITORING |
+| Kali Linux | Tests de sécurité | LAB-ATTAQUE |
+| Pi-hole | DNS filtrant | SERVICES |
+| Vaultwarden | Gestionnaire de mots de passe | SERVICES |
+| Paperless-NGX | Gestion de documents | SERVICES |
+| Nextcloud | Synchronisation de fichiers | SERVICES |
+| Immich | Photos | SERVICES |
+| Homepage | Tableau de bord des services | SERVICES |
+| Gitea | Dépôts Git, CI | SERVICES |
+| Ansible / Terraform | Automatisation, infrastructure as code | Poste d'administration |
 
 ---
 
 ## Compétences développées
 
 - Virtualisation : Proxmox, VMs, LXC, snapshots
-- Réseau : VLANs, routage inter-VLAN, firewall, VPN, DNS
-- Cybersécurité : segmentation, SIEM, durcissement, logs
-- Automatisation : Terraform, Ansible, CI/CD GitLab
-- Cloud : Azure, Terraform, AZ-900, AZ-500
-- Administration système : Linux, SSH, services, sauvegardes
-- Observabilité : Prometheus, Grafana, métriques, supervision
+- Réseau : VLANs, trunks, routage inter-VLAN, firewall, VPN, DNS
+- Cybersécurité : segmentation, matrice de flux, SIEM, durcissement, logs
+- Sauvegarde : stratégie 3-2-1, PBS, tests de restauration
+- Automatisation : Ansible, Terraform, CI
+- Cloud : Azure, AZ-900
+- Observabilité : Prometheus, Grafana
 
 ---
 
 ## Documentation
 
-- [Architecture détaillée](docs/01-architecture.md)
+- [Architecture](docs/01-architecture.md)
 - [Plan d'adressage IP](docs/02-adressage-ip.md)
 - [Inventaire matériel](docs/03-materiel.md)
-- [Liste des VMs](docs/04-vms.md)
+- [Liste des VMs et LXC](docs/04-vms.md)
 - [Roadmap détaillée](docs/05-roadmap.md)
+- [Matrice des flux](docs/06-flux.md)
+- [Stratégie de sauvegarde](docs/07-sauvegardes.md)
+- [Journal de bord](docs/journal/)
+- [Configuration du switch](configs/switch/sw-lab.md)

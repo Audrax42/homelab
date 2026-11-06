@@ -1,238 +1,113 @@
 # Roadmap — Homelab
 
-Ce document présente la feuille de route du homelab, avec une progression pensée pour construire une infrastructure cohérente, documentée et exploitable à moyen terme. L'objectif est d'avancer par étapes logiques, sans complexifier trop tôt l'environnement.
-
----
+La progression se fait par étapes : on ne passe pas à une phase tant que la précédente ne fonctionne pas et n'est pas documentée. Les dates ne sont pas figées.
 
 ## Vue d'ensemble
 
-| Phase | Intitulé | Statut | Finalité |
-|---|---|---|---|
-| 1 | Acquisition du matériel | Fait | Réunir la base matérielle du projet |
-| 2 | Installation Proxmox | À faire | Mettre en place l'hyperviseur principal |
-| 3 | Configuration réseau et VLANs | À faire | Structurer le réseau et isoler les usages |
-| 4 | Déploiement OPNsense | À faire | Ajouter un firewall et une logique de routage avancée |
-| 5 | Supervision et observabilité | À faire | Mesurer, surveiller et visualiser l'état du lab |
-| 6 | Services de sécurité | À faire | Ajouter des outils orientés cybersécurité |
-| 7 | DevSecOps et automatisation | À faire | Standardiser, automatiser et versionner |
-| 8 | Services auto-hébergés du quotidien | À faire | Héberger des services réellement utiles |
-| 9 | Cloud et Azure | À faire | Étendre le projet vers le cloud public |
-| 10 | Conteneurisation et orchestration | À faire | Explorer Docker, k3s et éventuellement Kubernetes |
-
----
-
-## Phase 1 — Acquisition du matériel
-
-**Statut :** terminée
-
-Cette phase consiste à réunir le matériel de base nécessaire pour démarrer le homelab dans de bonnes conditions.
-
-### Éléments concernés
-
-- Switch Cisco WS-C2960-8TC-L
-- Ancien PC 4 Go RAM pour l'observabilité légère
-- Raspberry Pi Zero 2 W prévu pour les services réseau permanents
-- Mini PC principal encore à acheter pour Proxmox
-
-### Résultat attendu
-
-À l'issue de cette phase, la base matérielle est identifiée et l'architecture générale devient réaliste à mettre en œuvre.
-
----
-
-## Phase 2 — Installation Proxmox
-
-**Statut :** à faire
-
-Cette phase pose les fondations de l'infrastructure de virtualisation. Le mini PC principal doit devenir le nœud central du homelab.
-
-### Tâches principales
-
-- Choisir et acheter le mini PC principal
-- Installer Proxmox VE
-- Configurer le stockage local initial
-- Vérifier l'accès d'administration de base
-- Préparer les premières VMs et LXC
-
-### Résultat attendu
-
-Un hyperviseur principal fonctionnel, prêt à accueillir les services et l'architecture réseau du projet.
-
----
-
-## Phase 3 — Configuration réseau et VLANs
-
-**Statut :** à faire
-
-Cette phase a pour but de structurer proprement le réseau du lab afin d'éviter un environnement plat et peu réaliste.
-
-### Tâches principales
-
-- Configurer le switch Cisco
-- Définir les VLANs principaux : LAN, LAB, DMZ, ADMIN
-- Préparer les trunks et ports d'accès nécessaires
-- Documenter l'adressage logique
-- Vérifier la séparation effective des flux
-
-### Résultat attendu
-
-Un réseau segmenté, plus propre, plus pédagogique et plus proche d'un environnement professionnel.
-
----
-
-## Phase 4 — Déploiement OPNsense
-
-**Statut :** à faire
-
-Cette phase introduit le composant firewall / routeur central du lab. OPNsense permettra de travailler la sécurité, le routage et les règles réseau de façon plus réaliste.
-
-### Tâches principales
-
-- Déployer une VM OPNsense sur Proxmox
-- Configurer les interfaces réseau et VLANs
-- Mettre en place les règles firewall de base
-- Préparer éventuellement les accès VPN côté firewall
-- Tester le routage entre segments selon la politique choisie
-
-### Résultat attendu
-
-Un point de contrôle réseau centralisé, capable de segmenter et filtrer les flux du homelab.
-
----
-
-## Phase 5 — Supervision et observabilité
-
-**Statut :** à faire
-
-Cette phase exploite l'ancien PC 4 Go RAM pour héberger une base légère d'observabilité.
-
-### Tâches principales
-
-- Installer Prometheus
-- Installer Grafana
-- Ajouter les exporters nécessaires
-- Construire les premiers dashboards
-- Surveiller l'état des machines et des services essentiels
-
-### Résultat attendu
-
-Une visibilité concrète sur l'état du lab, sa disponibilité et ses ressources.
-
----
-
-## Phase 6 — Services de sécurité
-
-**Statut :** à faire
-
-Cette phase introduit les briques orientées cybersécurité, dans une logique de pratique réelle et de montée en compétence.
-
-### Tâches principales
-
-- Déployer Wazuh
-- Déployer une VM Kali Linux
-- Centraliser les logs utiles
-- Tester des scénarios simples de détection
-- Documenter les premiers cas d'usage sécurité
-
-### Résultat attendu
-
-Un environnement initial de détection, de journalisation et de test orienté sécurité.
-
----
-
-## Phase 7 — DevSecOps et automatisation
-
-**Statut :** à faire
-
-Cette phase vise à rendre l'infrastructure plus propre, reproductible et maintenable.
-
-### Tâches principales
-
-- Déployer GitLab ou Gitea
-- Structurer les dépôts d'infrastructure
-- Introduire Ansible pour la configuration
-- Introduire Terraform pour l'infrastructure as code
-- Préparer une logique CI/CD adaptée au projet
-
-### Résultat attendu
-
-Un homelab mieux documenté, versionné et automatisé, avec une vraie dimension portfolio.
-
----
-
-## Phase 8 — Services auto-hébergés du quotidien
-
-**Statut :** à faire
-
-Cette phase donne au projet une utilité concrète au-delà de l'apprentissage pur.
-
-### Services envisagés
-
-- Vaultwarden
-- Paperless-NGX
-- Nextcloud
-- Immich
-- Homepage ou Homarr
-- Portainer
-
-### Résultat attendu
-
-Une infrastructure qui rend des services réellement utiles au quotidien, en plus de servir de terrain d'apprentissage.
-
----
-
-## Phase 9 — Cloud et Azure
-
-**Statut :** à faire
-
-Cette phase prolonge le homelab vers le cloud public et soutient la préparation des certifications visées.
-
-### Tâches principales
-
-- Travailler les bases Azure
-- Relier certains concepts du lab au cloud public
-- Utiliser Terraform dans un contexte mixte local / cloud
-- Préparer les objectifs liés à AZ-900 puis éventuellement au-delà
-
-### Résultat attendu
-
-Une meilleure continuité entre compétences homelab, cloud et certification.
-
----
-
-## Phase 10 — Conteneurisation et orchestration
-
-**Statut :** à faire
-
-Cette phase sert à aller plus loin sur les usages modernes d'infrastructure applicative.
-
-### Tâches principales
-
-- Déployer des services conteneurisés de façon plus systématique
-- Structurer les usages Docker
-- Tester k3s comme première approche légère
-- Évaluer plus tard Kubernetes ou AKS selon la progression du projet
-
-### Résultat attendu
-
-Une ouverture vers des architectures plus modernes et une progression naturelle vers l'orchestration.
-
----
+| Phase | Intitulé | Statut |
+|---|---|---|
+| 1 | Matériel | En cours |
+| 2 | Installation Proxmox | À faire (dépend du serveur) |
+| 3 | Réseau et VLANs | Commencée |
+| 4 | OPNsense | À faire |
+| 5 | Sauvegardes | À faire |
+| 6 | Supervision et observabilité | À faire |
+| 7 | Services de sécurité | À faire |
+| 8 | Services auto-hébergés du quotidien | À faire |
+| 9 | Automatisation et DevSecOps | À faire |
+| 10 | Plus tard : Azure, conteneurs et orchestration | Pas planifié |
 
 ## Priorités actuelles
 
-Les priorités les plus logiques à court terme sont les suivantes :
-
-1. Acheter le mini PC principal
-2. Installer Proxmox
-3. Mettre en place le Raspberry Pi Zero 2 W
-4. Monter la base réseau avec les VLANs
-5. Activer Prometheus et Grafana sur l'ancien PC
+1. Choisir le serveur principal ([critères](03-materiel.md))
+2. Sécuriser le switch : management dans le VLAN 40, VLAN 1 inutilisé, ports inutilisés désactivés ([cible](../configs/switch/sw-lab.md))
+3. Préparer l'ancien PC avec un disque dédié aux sauvegardes
 
 ---
 
-## Notes
+## Phase 1 — Matériel
 
-- Les dates ne sont pas figées : cette roadmap décrit un ordre logique plus qu'un calendrier strict.
-- Certaines phases peuvent se chevaucher partiellement selon le matériel disponible et le temps consacré au projet.
-- Les services listés représentent une cible de moyen terme ; tous ne seront pas forcément déployés immédiatement.
+**Statut :** en cours
+
+- [x] Switch Cisco WS-C2960-8TC-L
+- [x] Câble console
+- [x] Ancien PC 4 Go (futur PBS)
+- [ ] Serveur principal : 2 ports réseau, 32 Go de RAM
+- [ ] Disque dédié aux sauvegardes pour l'ancien PC
+
+**Terminée quand :** tout le matériel de l'[inventaire](03-materiel.md) est disponible.
+
+## Phase 2 — Installation Proxmox
+
+- [ ] Installer Proxmox VE sur le serveur principal
+- [ ] Configurer un bridge VLAN-aware sur le port trunk
+- [ ] Mettre l'interface de gestion dans le VLAN 40 (192.168.40.10)
+- [ ] Désactiver le dépôt entreprise, activer le dépôt no-subscription, mettre à jour
+
+**Terminée quand :** l'interface web de Proxmox est joignable depuis le PC principal, dans le VLAN ADMIN.
+
+## Phase 3 — Réseau et VLANs
+
+- [x] Créer les VLANs 10 à 40 sur le switch
+- [ ] Créer les VLANs 50, 60 et 999
+- [ ] Déplacer le management du switch dans le VLAN 40, désactiver `Vlan1`
+- [ ] Trunk sur Gi0/1, VLAN natif 999
+- [ ] Désactiver les ports inutilisés et les placer dans le VLAN 999
+- [ ] Vérifier la disponibilité de SSH (image k9), sinon restreindre Telnet
+- [ ] Ajouter le `running-config` nettoyé dans `configs/switch/`
+
+**Terminée quand :** `show vlan brief` et `show interfaces trunk` correspondent à la [configuration cible](../configs/switch/sw-lab.md).
+
+## Phase 4 — OPNsense
+
+- [ ] VM OPNsense, avec une interface WAN et une interface par VLAN
+- [ ] DHCP sur LAN et LAB-ATTAQUE, Unbound comme résolveur
+- [ ] Règles de firewall selon la [matrice des flux](06-flux.md)
+- [ ] WireGuard, avec une seule redirection de port sur la box (51820/UDP)
+- [ ] Tester chaque ligne de la matrice et noter les résultats dans le [journal](journal/)
+
+**Terminée quand :** chaque flux autorisé passe, et un flux non listé est bloqué et journalisé.
+
+## Phase 5 — Sauvegardes
+
+- [ ] Installer Proxmox Backup Server sur l'ancien PC
+- [ ] Sauvegardes quotidiennes chiffrées des VMs et LXC
+- [ ] Copie hors site
+- [ ] Premier test de restauration documenté
+
+**Terminée quand :** une VM a été restaurée avec succès depuis PBS. Voir la [stratégie de sauvegarde](07-sauvegardes.md).
+
+## Phase 6 — Supervision et observabilité
+
+- [ ] Prometheus et Grafana en LXC dans le VLAN 50
+- [ ] node_exporter sur Proxmox et PBS, SNMP sur le switch, métriques OPNsense
+- [ ] Premiers tableaux de bord et alertes (disque plein, hôte injoignable, sauvegarde en échec)
+
+## Phase 7 — Services de sécurité
+
+- [ ] Wazuh dans le VLAN 50, avec des agents sur les machines principales
+- [ ] Remontée des logs du firewall (règles de refus)
+- [ ] Kali dans le VLAN 60, avec une première cible vulnérable dans le même VLAN
+- [ ] Un scénario de détection documenté : une attaque lancée depuis Kali, l'alerte correspondante vue dans Wazuh
+
+## Phase 8 — Services auto-hébergés du quotidien
+
+À ne commencer qu'une fois la phase 5 terminée.
+
+- [ ] Pi-hole
+- [ ] Vaultwarden
+- [ ] Paperless-NGX
+- [ ] Nextcloud
+- [ ] Immich
+- [ ] Homepage
+
+## Phase 9 — Automatisation et DevSecOps
+
+- [ ] Gitea
+- [ ] Ansible : mises à jour et durcissement de base des LXC
+- [ ] Terraform (provider Proxmox) pour créer les LXC
+- [ ] Sauvegarde automatique des configurations (switch, OPNsense) dans Git
+
+## Phase 10 — Plus tard
+
+Pistes à revoir quand le reste sera stable : Azure et AZ-900, Terraform en mode hybride local/cloud, k3s.
